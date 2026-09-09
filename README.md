@@ -1,78 +1,182 @@
-\# MOITT System
+# MOITT System
+### Ministry of IT & Telecom e-Services Platform
 
-\## Ministry of IT \& Telecom e-Services Platform
+## 📌 Overview
 
+**MOITT System** is a Spring Boot REST API developed for a Ministry of IT & Telecom e-Services platform.
 
+The system provides APIs for managing citizens, telecom operators, digital services, applications, spectrum licenses, complaints, inspections, projects, and documents.
 
-\## 📌 Overview
+---
 
-MOITT System is a Spring Boot REST API developed for the Ministry of IT \& Telecom e-Services platform.
+## ✨ Features
 
+- Full CRUD operations for system entities
+- DTO-based API requests and responses
+- Builder Pattern for DTO conversion
+- Request validation using Spring Validation
+- Global exception handling
+- Soft delete functionality
+- JPA/Hibernate entity relationships
+- Custom business operations
+- REST API testing using Postman
 
+---
 
-The system manages citizens, telecom operators, digital services, applications, spectrum licenses, complaints, inspections, projects, and documents.
+## 🛠 Technologies
 
+| Technology | Purpose |
+|---|---|
+| Java | Programming language |
+| Spring Boot | Backend framework |
+| Spring Data JPA | Database access |
+| Hibernate | ORM |
+| MySQL | Database |
+| Lombok | Reduce boilerplate code |
+| Maven | Dependency management |
+| Postman | API testing |
 
+---
 
-\---
+## 📂 Project Structure
 
+```text
+MOITT-System/
+│
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── ...
+│   │   │
+│   │   └── resources/
+│   │       └── application.properties
+│   │
+│   └── test/
+│
+├── pom.xml
+├── README.md
+└── ...
+```
 
+### Main Package Structure
 
-\## ✨ Features
+```text
+src/main/java/
+└── com.example.moitt/
+    ├── controllers/
+    ├── services/
+    ├── repositories/
+    ├── entities/
+    ├── dto/
+    ├── exceptions/
+    └── ...
+```
 
+---
 
+## 🗄️ Main System Modules
 
-\- Full CRUD operations for all entities
+The system contains modules for:
 
-\- DTO-based API responses
+- Citizens
+- Telecom Operators
+- Digital Services
+- Applications
+- Spectrum Licenses
+- Complaints
+- Inspections
+- Projects
+- Documents
 
-\- Builder Pattern for DTO conversion
+---
 
-\- Request validation using Spring Validation
+## 🔗 API
 
-\- Global exception handling
+The application exposes RESTful endpoints for creating, retrieving, updating, and deleting system data.
 
-\- Soft delete functionality
+Example:
 
-\- JPA/Hibernate relationships
+```text
+GET    /api/...
+POST   /api/...
+PUT    /api/...
+DELETE /api/...
+```
 
-\- Custom business operations
+---
 
-\- REST API testing with Postman
+## ✅ Validation & Error Handling
 
+The system uses:
 
+- `@Valid`
+- Jakarta Bean Validation
+- Custom validation rules
+- Global exception handling
+- Appropriate HTTP status codes
 
-\---
+Invalid requests return structured error responses instead of exposing internal application errors.
 
+---
 
+## 🗑️ Soft Delete
 
-\## 🛠 Technologies
+Entities that support deletion use **soft delete** rather than permanently removing records from the database.
 
+This helps preserve historical data while preventing deleted records from appearing in normal API results.
 
+---
 
-\- Java
+## 🔄 Business Operations
 
-\- Spring Boot
+In addition to standard CRUD operations, the system includes custom business operations that handle relationships and rules between different entities.
 
-\- Spring Data JPA
+---
 
-\- Hibernate
+## 🧪 API Testing
 
-\- MySQL
+The REST APIs were tested using **Postman**.
 
-\- Lombok
+Testing includes:
 
-\- Maven
+- Create operations
+- Retrieve operations
+- Update operations
+- Delete operations
+- Validation errors
+- Exception handling
+- Business operations
 
-\- Postman
+---
 
+## ⚙️ Running the Project
 
+### 1. Clone the repository
 
-\---
+```bash
+git clone <repository-url>
+```
 
+### 2. Configure MySQL
 
+Create a MySQL database and update the database configuration in:
 
-\## 📂 Project Structure
+```text
+src/main/resources/application.properties
+```
 
+### 3. Run the application
 
+Using Maven:
 
+```bash
+mvn spring-boot:run
+```
+
+Or run the main Spring Boot application class from your IDE.
+
+---
+
+## 👩‍💻 Development
+
+This project was developed using **Java, Spring Boot, Spring Data JPA, Hibernate, and MySQL**, following a layered REST API architecture.
