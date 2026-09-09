@@ -1,34 +1,54 @@
-\# Ministry of IT \& Telecom e-Services System
+\# MOITT System
+
+\## Ministry of IT \& Telecom e-Services Platform
 
 
 
-\## Overview
+\## 📌 Overview
 
-A Spring Boot REST API platform developed for a national Ministry of IT \& Telecom to manage citizens, telecom operators, services, applications, licenses, complaints, inspections, and projects.
+MOITT System is a Spring Boot REST API developed for the Ministry of IT \& Telecom e-Services platform.
 
 
 
-\## Features
+The system manages citizens, telecom operators, digital services, applications, spectrum licenses, complaints, inspections, projects, and documents.
 
-\- Full CRUD operations for 16 entities
 
-\- DTO-based responses using Builder Pattern
 
-\- Data validation with custom error messages
+\---
+
+
+
+\## ✨ Features
+
+
+
+\- Full CRUD operations for all entities
+
+\- DTO-based API responses
+
+\- Builder Pattern for DTO conversion
+
+\- Request validation using Spring Validation
 
 \- Global exception handling
 
 \- Soft delete functionality
 
-\- Entity relationships with JPA/Hibernate
+\- JPA/Hibernate relationships
 
-\- Custom queries and business operations
+\- Custom business operations
 
-\- Postman API testing
+\- REST API testing with Postman
 
 
 
-\## Technologies
+\---
+
+
+
+\## 🛠 Technologies
+
+
 
 \- Java
 
@@ -42,51 +62,17 @@ A Spring Boot REST API platform developed for a national Ministry of IT \& Telec
 
 \- Lombok
 
+\- Maven
+
 \- Postman
 
 
 
-\## Main Modules
-
-\- Citizens \& Applications
-
-\- Telecom Operators \& Spectrum Licenses
-
-\- Digital Services
-
-\- Complaints Management
-
-\- Projects \& Milestones
-
-\- Document Management
+\---
 
 
 
-\## API Rules
-
-\- All entities extend a shared BaseClass
-
-\- Deleted records are hidden using soft delete
-
-\- Requests use validated DTOs
-
-\- Responses return DTOs only
+\## 📂 Project Structure
 
 
-
-\## Setup
-
-1\. Clone the repository
-
-2\. Configure MySQL database
-
-3\. Run the Spring Boot application
-
-4\. Test endpoints using Postman
-
-
-
-\## Developer
-
-Code Legends Cohort - Project 7
 
