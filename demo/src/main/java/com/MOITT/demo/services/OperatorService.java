@@ -4,6 +4,7 @@ import com.MOITT.demo.entities.Operator;
 import com.MOITT.demo.repositories.OperatorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.MOITT.demo.exceptions.ResourceNotFoundException;
 
 import java.util.Date;
 import java.util.List;
@@ -33,7 +34,7 @@ public class OperatorService {
 
     //Get All service
     public List<Operator> getAllOperators() {
-        return operatorRepository.getAllOperators();
+        return operatorRepository.getAllOperator();
     }
 
     //Get By Id service
@@ -67,4 +68,15 @@ public class OperatorService {
         operatorRepository.save(deleteOperator);
         return true;
     }
+
+    // Count active licenses
+    public Long getActiveLicensesCount(Long operatorId){
+        return operatorRepository.countActiveLicenses(operatorId);
+    }
+
+    // Count open complaints
+    public Long getOpenComplaintsCount(Long operatorId){
+        return operatorRepository.countOpenComplaints(operatorId);
+    }
+
 }
