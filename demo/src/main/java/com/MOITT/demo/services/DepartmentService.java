@@ -4,6 +4,7 @@ import com.MOITT.demo.entities.Department;
 import com.MOITT.demo.repositories.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.MOITT.demo.exceptions.ResourceNotFoundException;
 
 import java.util.Date;
 import java.util.List;
@@ -31,7 +32,7 @@ public class DepartmentService {
 
     //Get All service
     public List<Department> getAllDepartments() {
-        return departmentRepository.getAllDeparment();
+        return departmentRepository.getAllDepartment();
     }
 
     //Get By Id
@@ -62,5 +63,17 @@ public class DepartmentService {
         deleteDepartment.setUpdatedDate(new Date());
         departmentRepository.save(deleteDepartment);
         return true;
+    }
+
+    // Department pending applications
+    public Long getPendingApplicationsCount(Long departmentId){
+        return departmentRepository.countPendingApplications(departmentId);
+    }
+
+
+
+    // Department officer workload
+    public Long getOfficerWorkload(Long departmentId){
+        return departmentRepository.countOfficerWorkload(departmentId);
     }
 }
