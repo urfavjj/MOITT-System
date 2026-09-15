@@ -1,6 +1,7 @@
 package com.MOITT.demo.services;
 
 import com.MOITT.demo.entities.Vendor;
+import com.MOITT.demo.exceptions.ResourceNotFoundException;
 import com.MOITT.demo.repositories.VendorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class VendorService {
 
     //Get All service
     public List<Vendor> getAllVendors() {
-        return vendorRepository.getAllVendors();
+        return vendorRepository.getAllVendor();
     }
 
 
