@@ -19,4 +19,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     // Get active project by id
     @Query("SELECT p FROM Project p WHERE p.isActive=true AND p.id=:project")
     Project getById(@Param("project") Long id);
+
+    // Get projects over budget threshold
+    @Query("SELECT p FROM Project p WHERE p.isActive=true AND p.budget > :amount")
+    List<Project> getProjectsOverBudget(@Param("amount") Double amount);
 }
