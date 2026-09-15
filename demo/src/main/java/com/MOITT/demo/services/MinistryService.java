@@ -1,6 +1,7 @@
 package com.MOITT.demo.services;
 
 import com.MOITT.demo.entities.Ministry;
+import com.MOITT.demo.exceptions.ResourceNotFoundException;
 import com.MOITT.demo.repositories.MinistryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,8 +52,7 @@ public class MinistryService {
         ministryToUpdate.setUpdatedDate(new Date());
         ministryToUpdate.setName(updateName);
         ministryToUpdate.setAddress(updateAddress);
-        ministryToUpdate = ministryRepository.save(ministryToUpdate);
-        return ministryToUpdate;
+        return ministryRepository.save(ministryToUpdate);
     }
 
     //Delete service
