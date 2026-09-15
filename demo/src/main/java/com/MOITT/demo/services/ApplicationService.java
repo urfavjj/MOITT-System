@@ -1,25 +1,71 @@
 package com.MOITT.demo.services;
 
-import com.MOITT.demo.entities.Application;
-import com.MOITT.demo.repositories.ApplicationRepository;
+import com.MOITT.demo.entities.*;
+import com.MOITT.demo.repositories.*;
+import com.MOITT.demo.exceptions.ResourceNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ApplicationService {
     ApplicationRepository applicationRepository;
+    CitizenRepository citizenRepository;
+    ServiceRepository serviceRepository;
+    OfficerRepository officerRepository;
+    DocumentRepository documentRepository;
 
     @Autowired
-    public ApplicationService(ApplicationRepository applicationRepository) {
+    public ApplicationService(ApplicationRepository applicationRepository, CitizenRepository citizenRepository, ServiceRepository serviceRepository, OfficerRepository officerRepository, DocumentRepository documentRepository) {
         this.applicationRepository = applicationRepository;
+        this.citizenRepository = citizenRepository;
+        this.serviceRepository = serviceRepository;
+        this.officerRepository = officerRepository;
+        this.documentRepository = documentRepository;
     }
 
     //Add service
     public Long addApplication(Application application) {
+        application.setIsActive(true);
+        application.setCreatedDate(new Date());
+        application = applicationRepository.save(application);
+        return application.getId();
+    }
+
+    // Submit application
+    public Long submitApplication(Long citizenId, Long serviceId, Long officerId){
+        Citizen citizen = citizenRepository.getById(citizenId);
+        if(citizen == null || !citizen.getIsActive()){
+            throw new ResourceNotFoundException(
+                    "Citizen not found or inactive"
+            );
+        }
+        com.MOITT.demo.entities.Service service =
+                serviceRepository.getById(serviceId);
+        if(service == null || !service.getIsActive()){
+            throw new ResourceNotFoundException(
+                    "Service not found or inactive"
+            );
+        }
+        Officer officer = officerRepository.getById(officerId);
+        if(officer == null || !officer.getIsActive()){
+            throw new ResourceNotFoundException(
+                    "Officer not found or inactive"
+            );
+        }
+        Application application = new Application();
+        application.setCitizen(citizen);
+        application.setService(service);
+        application.setOfficer(officer);
+        application.setReferenceNumber(
+                "APP-" + UUID.randomUUID()
+        );
+        application.setStatus(ApplicationStatus.PENDING);
         application.setIsActive(true);
         application.setCreatedDate(new Date());
         application = applicationRepository.save(application);
@@ -61,6 +107,58 @@ public class ApplicationService {
         deleteApplication.setIsActive(false);
         deleteApplication.setUpdatedDate(new Date());
         applicationRepository.save(deleteApplication);
+        return true;
+    }
+
+    // Get applications by status
+    public List<Application> getApplicationsByStatus(ApplicationStatus status){
+        return applicationRepository.getApplicationsByStatus(status);
+    }
+
+    // Get citizen application history
+    public List<Application> getCitizenApplicationHistory(Long citizenId){
+        Citizen citizen = citizenRepository.getById(citizenId);
+        if(citizen == null || !citizen.getIsActive()){
+            throw new ResourceNotFoundException(
+                    "Citizen not found or inactive"
+            );
+        }
+        return applicationRepository.getCitizenApplicationHistory(citizenId);
+    }
+
+    // Approve or reject application
+    public Boolean processApplicationDecision(Long applicationId, Long officerId, String decision, String documentTitle){
+        Application application = getById(applicationId);
+        Officer officer = officerRepository.getById(officerId);
+        if(officer == null || !officer.getIsActive()){
+            throw new ResourceNotFoundException(
+                    "Officer not found or inactive"
+            );
+        }
+
+        application.setOfficer(officer);
+        if(decision.equalsIgnoreCase("APPROVED")){
+            application.setStatus(ApplicationStatus.APPROVED);
+        }
+        else if(decision.equalsIgnoreCase("REJECTED")){
+            application.setStatus(ApplicationStatus.REJECTED);
+
+        }
+        else{
+            throw new IllegalArgumentException(
+                    "Invalid decision"
+            );
+        }
+
+        application.setUpdatedDate(new Date());
+        applicationRepository.save(application);
+        Document document = new Document();
+        document.setTitle(documentTitle);
+        document.setType("DECISION");
+        document.setUploadDate(new Date());
+        document.setApplication(application);
+        document.setIsActive(true);
+        documentRepository.save(document);
         return true;
     }
 }
