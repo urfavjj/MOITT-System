@@ -2,9 +2,12 @@ package com.MOITT.demo.services;
 
 import com.MOITT.demo.entities.Milestone;
 import com.MOITT.demo.entities.MilestoneStatus;
+import com.MOITT.demo.entities.Project;
 import com.MOITT.demo.repositories.MilestoneRepository;
+import com.MOITT.demo.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.MOITT.demo.exceptions.ResourceNotFoundException;
 
 import java.util.Date;
 import java.util.List;
@@ -13,10 +16,12 @@ import java.util.Optional;
 @Service
 public class MilestoneService {
     MilestoneRepository milestoneRepository;
+    ProjectRepository projectRepository;
 
     @Autowired
-    public MilestoneService(MilestoneRepository milestoneRepository) {
+    public MilestoneService(MilestoneRepository milestoneRepository, ProjectRepository projectRepository){
         this.milestoneRepository = milestoneRepository;
+        this.projectRepository = projectRepository;
     }
 
     //Add service
@@ -31,10 +36,30 @@ public class MilestoneService {
         return milestone.getId();
     }
 
+    // Add milestone to project
+    public Long addProjectMilestone(Long projectId, String title, Date dueDate){
+        Project project = projectRepository.getById(projectId);
+        if(project == null || !project.getIsActive()){
+            throw new ResourceNotFoundException(
+                    "Project not found or inactive"
+            );
+        }
+
+        Milestone milestone = new Milestone();
+        milestone.setProject(project);
+        milestone.setTitle(title);
+        milestone.setDueDate(dueDate);
+        milestone.setStatus(MilestoneStatus.PENDING);
+        milestone.setIsActive(true);
+        milestone.setCreatedDate(new Date());
+        milestone = milestoneRepository.save(milestone);
+        return milestone.getId();
+    }
+
 
     //Get All service
     public List<Milestone> getAllMilestones() {
-        return milestoneRepository.getAllMilestones();
+        return milestoneRepository.getAllMilestone();
     }
 
 
@@ -68,6 +93,15 @@ public class MilestoneService {
         deleteMilestone.setIsActive(false);
         deleteMilestone.setUpdatedDate(new Date());
         milestoneRepository.save(deleteMilestone);
+        return true;
+    }
+
+    // Mark milestone complete
+    public Boolean completeMilestone(Long milestoneId){
+        Milestone milestone = getById(milestoneId);
+        milestone.setStatus(MilestoneStatus.COMPLETED);
+        milestone.setUpdatedDate(new Date());
+        milestoneRepository.save(milestone);
         return true;
     }
 }
