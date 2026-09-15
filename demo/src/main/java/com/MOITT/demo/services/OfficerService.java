@@ -1,6 +1,7 @@
 package com.MOITT.demo.services;
 
 import com.MOITT.demo.entities.Officer;
+import com.MOITT.demo.exceptions.ResourceNotFoundException;
 import com.MOITT.demo.repositories.OfficerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
