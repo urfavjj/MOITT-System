@@ -1,11 +1,15 @@
 package com.MOITT.demo.services;
 
 import com.MOITT.demo.entities.LicenseStatus;
+import com.MOITT.demo.entities.Operator;
 import com.MOITT.demo.entities.SpectrumLicense;
+import com.MOITT.demo.repositories.OperatorRepository;
 import com.MOITT.demo.repositories.SpectrumLicenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.MOITT.demo.exceptions.ResourceNotFoundException;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -13,10 +17,12 @@ import java.util.Optional;
 @Service
 public class SpectrumLicenseService {
     SpectrumLicenseRepository spectrumLicenseRepository;
+    OperatorRepository operatorRepository;
 
     @Autowired
-    public SpectrumLicenseService(SpectrumLicenseRepository spectrumLicenseRepository) {
+    public SpectrumLicenseService(SpectrumLicenseRepository spectrumLicenseRepository, OperatorRepository operatorRepository) {
         this.spectrumLicenseRepository = spectrumLicenseRepository;
+        this.operatorRepository = operatorRepository;
     }
 
     //Add service
@@ -33,10 +39,50 @@ public class SpectrumLicenseService {
         return spectrumLicense.getId();
     }
 
+    //Issue license
+    public Long issueLicense(Long operatorId, String bandName, Double frequencyMhz, Date issueDate, Date expiryDate){
+        Operator operator = operatorRepository.getById(operatorId);
+        if(operator == null || !operator.getIsActive()){
+            throw new ResourceNotFoundException(
+                    "Operator not found or inactive"
+            );
+
+        }
+
+        if(!expiryDate.after(issueDate)){
+            throw new IllegalArgumentException(
+                    "Expiry date must be after issue date"
+            );
+
+        }
+
+        SpectrumLicense license = new SpectrumLicense();
+        license.setIsActive(true);
+        license.setCreatedDate(new Date());
+        license.setBandName(bandName);
+        license.setFrequencyMhz(frequencyMhz);
+        license.setIssueDate(issueDate);
+        license.setExpiryDate(expiryDate);
+        license.setStatus(LicenseStatus.ACTIVE);
+        license.setOperator(operator);
+        license = spectrumLicenseRepository.save(license);
+        return license.getId();
+    }
+
     //Get All service
     public List<SpectrumLicense> getAllSpectrumLicenses() {
-        return spectrumLicenseRepository.getAllSpectrumLicenses();
+        return spectrumLicenseRepository.getAllSpectrumLicense();
     }
+
+    // Get licenses expiring within 30 days
+    public List<SpectrumLicense> getLicensesExpiringSoon(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, 30);
+        Date date = calendar.getTime();
+        return spectrumLicenseRepository
+                .getExpiringLicenses(date);
+    }
+
 
     //Get By Id service
     public SpectrumLicense getById(Long id) {
