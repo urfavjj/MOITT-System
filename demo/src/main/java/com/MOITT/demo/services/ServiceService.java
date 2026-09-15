@@ -1,6 +1,7 @@
 package com.MOITT.demo.services;
 
 import com.MOITT.demo.repositories.ServiceRepository;
+import com.MOITT.demo.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +18,9 @@ public class ServiceService {
         this.serviceRepository = serviceRepository;
     }
 
-    //Add service
-    public Long addService(String name, String description, Double fee, Integer processingDays
-    ) {
-        Service service = new Service();
+    // Add service
+    public Long addService(String name, String description, Double fee, Integer processingDays) {
+        com.MOITT.demo.entities.Service service = new com.MOITT.demo.entities.Service();
         service.setIsActive(true);
         service.setCreatedDate(new Date());
         service.setName(name);
@@ -31,14 +31,14 @@ public class ServiceService {
         return service.getId();
     }
 
-    //Get All service
-    public List<Service> getAllServices() {
+    // Get All service
+    public List<com.MOITT.demo.entities.Service> getAllServices() {
         return serviceRepository.getAllService();
     }
 
-    //Get By Id service
-    public Service getById(Long id) {
-        Optional<Service> service = serviceRepository.findById(id);
+    // Get By Id service
+    public com.MOITT.demo.entities.Service getById(Long id) {
+        Optional<com.MOITT.demo.entities.Service> service = serviceRepository.findById(id);
         if (service.isPresent() && service.get().getIsActive()) {
             return service.get();
         }
@@ -47,9 +47,9 @@ public class ServiceService {
         );
     }
 
-    //Update Service
-    public Service updatedService(Long id, String updateName, String updateDescription, Double updateFee, Integer updateProcessingDays) {
-        Service serviceToUpdate = getById(id);
+    // Update service
+    public com.MOITT.demo.entities.Service updatedService(Long id, String updateName, String updateDescription, Double updateFee, Integer updateProcessingDays) {
+        com.MOITT.demo.entities.Service serviceToUpdate = getById(id);
         serviceToUpdate.setUpdatedDate(new Date());
         serviceToUpdate.setName(updateName);
         serviceToUpdate.setDescription(updateDescription);
@@ -59,14 +59,12 @@ public class ServiceService {
         return serviceToUpdate;
     }
 
-    //Delete service
+    // Delete service
     public Boolean deleteById(Long id) {
-        Service deleteService = getById(id);
+        com.MOITT.demo.entities.Service deleteService = getById(id);
         deleteService.setIsActive(false);
         deleteService.setUpdatedDate(new Date());
         serviceRepository.save(deleteService);
         return true;
     }
-
-
 }
