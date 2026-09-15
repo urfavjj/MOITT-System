@@ -1,10 +1,14 @@
 package com.MOITT.demo.services;
 
+import com.MOITT.demo.entities.Citizen;
 import com.MOITT.demo.entities.DomainRegistration;
 import com.MOITT.demo.entities.DomainStatus;
+import com.MOITT.demo.exceptions.BusinessRuleException;
+import com.MOITT.demo.repositories.CitizenRepository;
 import com.MOITT.demo.repositories.DomainRegistrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.MOITT.demo.exceptions.ResourceNotFoundException;
 
 import java.util.Date;
 import java.util.List;
@@ -13,10 +17,12 @@ import java.util.Optional;
 @Service
 public class DomainRegistrationService {
     DomainRegistrationRepository domainRegistrationRepository;
+    CitizenRepository citizenRepository;
 
     @Autowired
-    public DomainRegistrationService(DomainRegistrationRepository domainRegistrationRepository) {
+    public DomainRegistrationService(DomainRegistrationRepository domainRegistrationRepository, CitizenRepository citizenRepository) {
         this.domainRegistrationRepository = domainRegistrationRepository;
+        this.citizenRepository = citizenRepository;
     }
 
     //Add service
@@ -32,9 +38,56 @@ public class DomainRegistrationService {
         return domainRegistration.getId();
     }
 
+    //Register service
+    public Long registerDomain(Long citizenId, String domainName, Date registeredDate, Date expiryDate){
+        Citizen citizen = citizenRepository.getById(citizenId);
+        if(citizen == null || !citizen.getIsActive()){
+            throw new ResourceNotFoundException(
+                    "Citizen not found or inactive"
+            );
+        }
+
+        DomainRegistration existingDomain = domainRegistrationRepository.findActiveDomain(domainName);
+        if(existingDomain != null){
+            throw new BusinessRuleException(
+                    "Domain name already registered"
+            );
+        }
+
+        DomainRegistration domain = new DomainRegistration();
+        domain.setCitizen(citizen);
+        domain.setDomainName(domainName);
+        domain.setRegisteredDate(registeredDate);
+        domain.setExpiryDate(expiryDate);
+        domain.setStatus(DomainStatus.ACTIVE);
+        domain.setIsActive(true);
+        domain.setCreatedDate(new Date());
+        domain = domainRegistrationRepository.save(domain);
+        return domain.getId();
+    }
+
+    //Renew service
+    public Boolean renewDomain(Long domainId, Date newExpiryDate) {
+        DomainRegistration domain = getById(domainId);
+        if (!domain.getStatus().equals(DomainStatus.ACTIVE)) {
+            throw new IllegalStateException(
+                    "Only active domains can be renewed"
+            );
+        }
+        if (!newExpiryDate.after(domain.getExpiryDate())) {
+            throw new IllegalArgumentException(
+                    "New expiry date must be after current expiry date"
+            );
+        }
+        domain.setExpiryDate(newExpiryDate);
+        domain.setUpdatedDate(new Date());
+        domainRegistrationRepository.save(domain);
+        return true;
+    }
+
     //Get All service
     public List<DomainRegistration> getAllDomainRegistrations() {
-        return domainRegistrationRepository.getAllDomainRegistrations();
+        return domainRegistrationRepository.getAllDomainRegistration();
     }
 
     //Get By Id service
