@@ -19,4 +19,13 @@ public interface OperatorRepository extends JpaRepository<Operator, Long> {
     // Get active operator by id
     @Query("SELECT o FROM Operator o WHERE o.isActive=true AND o.id=:operator")
     Operator getById(@Param("operator") Long id);
+
+    // Count active licenses
+    @Query("SELECT COUNT(s) FROM SpectrumLicense s WHERE s.isActive=true AND s.operator.id=:operatorId AND s.status='ACTIVE'")
+    Long countActiveLicenses(@Param("operatorId") Long operatorId);
+
+    // Count open complaints
+    @Query("SELECT COUNT(c) FROM Complaint c WHERE c.isActive=true AND c.operator.id=:operatorId AND c.status='OPEN'")
+    Long countOpenComplaints(@Param("operatorId") Long operatorId);
+
 }
