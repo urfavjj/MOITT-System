@@ -2,9 +2,11 @@ package com.MOITT.demo.services;
 
 import com.MOITT.demo.entities.Project;
 import com.MOITT.demo.entities.ProjectStatus;
+import com.MOITT.demo.repositories.MilestoneRepository;
 import com.MOITT.demo.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.MOITT.demo.exceptions.ResourceNotFoundException;
 
 import java.util.Date;
 import java.util.List;
@@ -13,10 +15,12 @@ import java.util.Optional;
 @Service
 public class ProjectService {
     ProjectRepository projectRepository;
+    MilestoneRepository milestoneRepository;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository) {
+    public ProjectService(ProjectRepository projectRepository, MilestoneRepository milestoneRepository) {
         this.projectRepository = projectRepository;
+        this.milestoneRepository = milestoneRepository;
     }
 
 
@@ -36,7 +40,7 @@ public class ProjectService {
 
     //Get All service
     public List<Project> getAllProjects() {
-        return projectRepository.getAllProjects();
+        return projectRepository.getAllProject();
     }
 
 
@@ -50,6 +54,11 @@ public class ProjectService {
         throw new ResourceNotFoundException(
                 "Project not found by id: " + id
         );
+    }
+
+    // Get projects over budget
+    public List<Project> getProjectsOverBudget(Double amount){
+        return projectRepository.getProjectsOverBudget(amount);
     }
 
 
@@ -73,5 +82,17 @@ public class ProjectService {
         deleteProject.setUpdatedDate(new Date());
         projectRepository.save(deleteProject);
         return true;
+    }
+
+    // Get milestone completion percentage
+    public Double getMilestoneCompletionPercentage(Long projectId){
+        Project project = getById(projectId);
+        Long completed = milestoneRepository.countCompletedMilestones(projectId);
+        Long total = milestoneRepository.countTotalMilestones(projectId);
+        if(total == 0){
+            return 0.0;
+        }
+
+        return (completed.doubleValue() / total.doubleValue()) * 100;
     }
 }
