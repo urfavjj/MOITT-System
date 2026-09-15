@@ -1,6 +1,7 @@
 package com.MOITT.demo.services;
 
 import com.MOITT.demo.entities.Document;
+import com.MOITT.demo.exceptions.ResourceNotFoundException;
 import com.MOITT.demo.repositories.DocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class DocumentService {
 
     //Get All service
     public List<Document> getAllDocuments() {
-        return documentRepository.getAllDocuments();
+        return documentRepository.getAllDocument();
     }
 
 
