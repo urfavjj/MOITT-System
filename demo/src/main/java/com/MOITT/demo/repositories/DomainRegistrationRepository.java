@@ -17,4 +17,7 @@ public interface DomainRegistrationRepository extends JpaRepository<DomainRegist
     // Get active domain registration by id
     @Query("SELECT d FROM DomainRegistration d WHERE d.isActive=true AND d.id=:abc")
     DomainRegistration getById(@Param("abc") Long id);
+
+    @Query("SELECT d FROM DomainRegistration d WHERE d.isActive=true AND d.domainName=:domainName")
+    DomainRegistration findActiveDomain(@Param("domainName") String domainName);
 }
