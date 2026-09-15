@@ -1,6 +1,7 @@
 package com.MOITT.demo.services;
 
 import com.MOITT.demo.entities.Citizen;
+import com.MOITT.demo.exceptions.ResourceNotFoundException;
 import com.MOITT.demo.repositories.CitizenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class CitizenService {
 
     //Get All service
     public List<Citizen> getAllCitizens() {
-        return citizenRepository.getAllCitizens();
+        return citizenRepository.getAllCitizen();
     }
 
     //Get By Id service
