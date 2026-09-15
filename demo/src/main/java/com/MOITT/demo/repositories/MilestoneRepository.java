@@ -14,9 +14,13 @@ public interface MilestoneRepository extends JpaRepository<Milestone, Long> {
     @Query("SELECT m FROM Milestone m WHERE m.isActive=true")
     List<Milestone> getAllMilestone();
 
-
-
     // Get active milestone by id
     @Query("SELECT m FROM Milestone m WHERE m.isActive=true AND m.id=:milestone")
     Milestone getById(@Param("milestone") Long id);
+
+    @Query("SELECT COUNT(m) FROM Milestone m WHERE m.isActive=true AND m.project.id=:projectId AND m.status='COMPLETED'")
+    Long countCompletedMilestones(@Param("projectId") Long projectId);
+
+    @Query("SELECT COUNT(m) FROM Milestone m WHERE m.isActive=true AND m.project.id=:projectId")
+    Long countTotalMilestones(@Param("projectId") Long projectId);
 }
